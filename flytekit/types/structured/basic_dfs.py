@@ -42,6 +42,8 @@ class PandasToParquetEncodingHandler(StructuredDatasetEncoder):
         df = typing.cast(pd.DataFrame, structured_dataset.dataframe)
         local_dir = ctx.file_access.get_random_local_directory()
         local_path = os.path.join(local_dir, f"{0:05}")
+        print("local_path", local_path)
+        # local_path = "s3://flyte-batch/flyte-batch/fsspec/12"
         df.to_parquet(local_path, coerce_timestamps="us", allow_truncated_timestamps=False)
         ctx.file_access.upload_directory(local_dir, path)
         structured_dataset_type.format = PARQUET

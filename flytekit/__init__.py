@@ -152,7 +152,6 @@ Common Flyte IDL Objects
    LiteralType
    BlobType
 """
-
 import sys
 
 if sys.version_info < (3, 10):
@@ -189,6 +188,22 @@ from flytekit.types import directory, file, schema
 from flytekit.types.structured.structured_dataset import StructuredDataset, StructuredDatasetType
 
 __version__ = "0.0.0+develop"
+
+_stream_io = False
+
+
+def enable_stream_io():
+    global _stream_io
+    _stream_io = True
+
+
+def disable_stream_io():
+    global _stream_io
+    _stream_io = False
+
+
+def is_stream_io() -> bool:
+    return _stream_io
 
 
 def current_context() -> ExecutionParameters:

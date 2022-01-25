@@ -4,6 +4,7 @@ from typing import Type
 
 import pandas
 
+import flytekit
 from flytekit import FlyteContext
 from flytekit.configuration import sdk
 from flytekit.core.type_engine import T, TypeEngine, TypeTransformer
@@ -48,6 +49,8 @@ class ParquetIO(object):
         # Convert all columns to unicode as pyarrow's parquet reader can not handle mixed strings and unicode.
         # Since columns from Hive are returned as unicode, if a user wants to add a column to a dataframe returned from
         # Hive, then output the new data, the user would have to provide a unicode column name which is unnatural.
+        print("to_file", to_file)
+        # to_file = "s3://flyte-batch/flyte-batch/fsspec/1234"
         df.to_parquet(
             to_file,
             coerce_timestamps=coerce_timestamps,
