@@ -15,7 +15,7 @@ and Pagerduty is incumbent on those email API being set-up correctly.
 .. autoclass:: flytekit.core.notification.Notification
 
 """
-from typing import List
+from typing import List, Dict
 
 from flytekit.models import common as _common_model
 from flytekit.models.core import execution as _execution_model
@@ -37,13 +37,14 @@ class Notification(_common_model.Notification):
         email: _common_model.EmailNotification = None,
         pager_duty: _common_model.PagerDutyNotification = None,
         slack: _common_model.SlackNotification = None,
+        webhook: _common_model.WebHookNotification = None,
     ):
         """
         :param list[int] phases: A required list of phases for which to fire the event.  Events can only be fired for
             terminal phases.  Phases should be as defined in: flytekit.models.core.execution.WorkflowExecutionPhase
         """
         self._validate_phases(phases)
-        super(Notification, self).__init__(phases, email=email, pager_duty=pager_duty, slack=slack)
+        super(Notification, self).__init__(phases, email=email, pager_duty=pager_duty, slack=slack, webhook=webhook)
 
     def _validate_phases(self, phases: List[int]):
         """
@@ -114,3 +115,23 @@ class Slack(Notification):
         :param list[str] recipients_email: A required non-empty list of recipients for the notification.
         """
         super(Slack, self).__init__(phases, slack=_common_model.SlackNotification(recipients_email))
+
+
+class WebHook(Notification):
+    """
+    This notification should be used when sending regular emails to people.
+
+    .. code-block:: python
+
+        from flytekit.models.core.execution import WorkflowExecutionPhase
+
+        Email(phases=[WorkflowExecutionPhase.SUCCEEDED], recipients_email=["my-team@email.com"])
+    """
+
+    def __init__(self, phases: List[int], webhook_parameters: Dict[str, str]):
+        """
+        :param list[int] phases: A required list of phases for which to fire the event.  Events can only be fired for
+            terminal phases. Phases should be as defined in: :py:class:`flytekit.models.core.execution.WorkflowExecutionPhase`
+        :param list[str] recipients_email: A required non-empty list of recipients for the notification.
+        """
+        super(WebHook, self).__init__(phases, webhook=_common_model.WebHookNotification(webhook_parameters))

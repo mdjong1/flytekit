@@ -247,6 +247,35 @@ class PagerDutyNotification(FlyteIdlEntity):
         return cls(pb2_object.recipients_email)
 
 
+class WebHookNotification(FlyteIdlEntity):
+    def __init__(self, webhook_parameters):
+        """
+        :param dict[Text, Text] webhook_parameters:
+        """
+        self._webhook_parameters = webhook_parameters
+
+    @property
+    def recipients_email(self):
+        """
+        :rtype: list[Text]
+        """
+        return self._recipients_email
+
+    def to_flyte_idl(self):
+        """
+        :rtype: flyteidl.admin.common_pb2.WebHookNotification
+        """
+        return _common_pb2.WebHookNotification(recipients_email=self.recipients_email)
+
+    @classmethod
+    def from_flyte_idl(cls, pb2_object):
+        """
+        :param flyteidl.admin.common_pb2.WebHookNotification pb2_object:
+        :rtype: EmailNotification
+        """
+        return cls(pb2_object.recipients_email)
+
+
 class Notification(FlyteIdlEntity):
     def __init__(
         self,
@@ -254,6 +283,7 @@ class Notification(FlyteIdlEntity):
         email: EmailNotification = None,
         pager_duty: PagerDutyNotification = None,
         slack: SlackNotification = None,
+        webhook: WebHookNotification = None,
     ):
         """
         Represents a structure for notifications based on execution status.
@@ -267,6 +297,7 @@ class Notification(FlyteIdlEntity):
         self._email = email
         self._pager_duty = pager_duty
         self._slack = slack
+        self._webhook = webhook
 
     @property
     def phases(self):
